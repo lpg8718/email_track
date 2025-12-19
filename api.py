@@ -4,32 +4,24 @@ import os
 
 app = Flask(__name__)
 
-DB_FILE = "email.db"
 
 @app.route("/")
 def health():
     return "OK"
 
-@app.route("/email/open/<tracking_id>/image")
-def track_and_serve_image(tracking_id):
-    # track open
+@app.route("/test.png")
+def test_png():
+    print("IMAGE HIT..........")
+    print("Entry in databse ..........")
+    return Response(
+        b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR'
+        b'\x00\x00\x00\x01\x00\x00\x00\x01'
+        b'\x08\x06\x00\x00\x00\x1f\x15\xc4\x89'
+        b'\x00\x00\x00\nIDATx\x9cc`\x00\x00\x00\x02\x00\x01'
+        b'\xe2!\xbc3\x00\x00\x00\x00IEND\xaeB`\x82',
+        mimetype="image/png"
+    )
 
-    print("Open api........................")
-    try:
-        conn = sqlite3.connect(DB_FILE)
-        cursor = conn.cursor()
-        cursor.execute(
-            "UPDATE email_tracking SET opened_at=datetime('now') WHERE id=? AND opened_at IS NULL",
-            (tracking_id,)
-        )
-        conn.commit()
-        conn.close()
-    except Exception as e:
-        print("DB error:", e)
-
-    # serve image
-    image_path = "static/images/header.png"
-    return send_file(image_path, mimetype="image/png", cache_timeout=0)
 
 if __name__ == "__main__":
     app.run()
