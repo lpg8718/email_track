@@ -23,6 +23,7 @@ PIXEL_BYTES = (
 
 @app.route("/pixel.png")
 def tracking_pixel():
+    print("............................................................")
     return Response(
         PIXEL_BYTES,
         mimetype="image/png",
